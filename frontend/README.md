@@ -1,0 +1,31 @@
+
+```txt
+src/
+  app/
+    App.jsx
+    providers/AppProviders.jsx
+    router/AppRoutes.jsx
+  modules/
+    auth/
+      context/AuthContext.jsx
+      services/authService.js
+    carrito/
+      components/
+      context/CarritoContext.jsx
+      services/carritoService.js
+    catalogo/
+      components/
+      pages/CatalogoPage.jsx
+      services/catalogoService.js
+    dashboard/
+      pages/DashboardPage.jsx
+    perfil/
+      pages/PerfilPage.jsx
+      services/perfilService.js
+  shared/
+    components/layout/
+    services/api.js
+  assets/images/
+  styles/global.css
+  main.jsx
+```

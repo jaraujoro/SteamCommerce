@@ -1,0 +1,37 @@
+apiservice/
+│
+├── src/
+│   ├── config/
+│   │   ├── env.js
+│   │   └── dns.js
+│   │
+│   ├── controllers/
+│   │   └── steam.controller.js
+│   │
+│   ├── routes/
+│   │   └── steam.routes.js
+│   │
+│   ├── services/
+│   │   ├── steamAuth.service.js
+│   │   └── tradeOffer.service.js
+│   │
+│   ├── utils/
+│   │   └── asset.util.js
+│   │
+│   ├── middlewares/
+│   │   └── error.middleware.js
+│   │
+│   ├── app.js
+│   └── server.js
+│
+├── scripts/
+│   ├── activarSteamGuard.js
+│   └── generarCodigo.js
+│
+├── mafiles/
+│   └── 76561199211468752.maFile
+│
+├── .env
+├── .gitignore
+├── package.json
+└── package-lock.json

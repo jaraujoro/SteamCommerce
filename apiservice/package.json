@@ -1,0 +1,28 @@
+{
+  "name": "apiservice",
+  "version": "1.0.0",
+  "description": "Api node - steam trade offert",
+  "main": "src/server.js",
+  "scripts": {
+    "start": "node src/server.js",
+    "dev": "nodemon src/server.js",
+    "steam:code": "node scripts/generarCodigo.js",
+    "steam:guard": "node scripts/activarSteamGuard.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "axios": "^1.18.1",
+    "cors": "^2.8.6",
+    "dotenv": "^17.4.2",
+    "express": "^5.2.1",
+    "steam-totp": "^2.1.2",
+    "steam-tradeoffer-manager": "^2.13.0",
+    "steam-user": "^5.3.0",
+    "steamcommunity": "^3.50.1"
+  },
+  "devDependencies": {
+    "nodemon": "^3.1.14"
+  }
+}

@@ -1,0 +1,4 @@
+.env
+*.maFile
+node_modules/
+before/
