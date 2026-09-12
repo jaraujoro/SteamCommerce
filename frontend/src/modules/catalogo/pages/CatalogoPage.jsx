@@ -25,7 +25,7 @@ const CatalogoPage = () => {
     const cargarInventario = async () => {
       try {
         const response = await obtenerInventario();
-        setItems(response || []);
+        setItems(response.data || []);
       } catch (error) {
         setError(error.message || "Error al cargar el inventario");
       } finally {

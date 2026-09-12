@@ -42,7 +42,6 @@ const fetchWithAuth = async (url, options = {}) => {
 
   // Si el token expiró (401), intentar refrescar
   if (response.status === 401 && token || response.status === 403) {
-    console.log("hola 401");
     const refresh = getRefreshToken();
     if (refresh) {
       try {
