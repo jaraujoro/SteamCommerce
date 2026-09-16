@@ -10,7 +10,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -54,8 +53,8 @@ public class SteamInventoryService {
         return obtenerInventario(steamId, appId, startAssetId, false);
     }
 
-    private SteamInventoryResponse obtenerInventario(String steamId, String appId,
-            String startAssetId, boolean reintento) {
+    private SteamInventoryResponse obtenerInventario(String steamId, String appId, String startAssetId,
+            boolean reintento) {
 
         UriComponentsBuilder builder = UriComponentsBuilder
                 .fromHttpUrl("https://steamcommunity.com/inventory/" + steamId + "/" + appId + "/2")
@@ -68,7 +67,7 @@ public class SteamInventoryService {
 
         String url = builder.build().toUriString();
 
-        log.debug("📡 Consultando Steam: {}", url);
+        log.debug("Consultando Steam: {}", url);
 
         try {
             HttpEntity<String> entity = new HttpEntity<>(HEADERS);
@@ -82,7 +81,7 @@ public class SteamInventoryService {
 
             if (respuesta != null && respuesta.isSuccess()) {
                 int itemsEnPagina = respuesta.getAssets() != null ? respuesta.getAssets().size() : 0;
-                log.debug("✅ Página obtenida: {} items | Total: {}",
+                log.debug("Página obtenida: {} items | Total: {}",
                         itemsEnPagina, respuesta.getTotal_inventory_count());
                 return respuesta;
             }
@@ -94,16 +93,16 @@ public class SteamInventoryService {
             // Rate limit (429): reintentar UNA sola vez
             if (mensaje != null && mensaje.contains("429")) {
                 if (reintento) {
-                    log.error("❌ Steam sigue devolviendo 429 tras el reintento. Abortando.");
+                    log.error("Steam sigue devolviendo 429 tras el reintento. Abortando.");
                     return null;
                 }
-                log.warn("⚠️ Rate Limit de Steam (429) - Esperando {} ms antes de reintentar",
+                log.warn("Rate Limit de Steam (429) - Esperando {} ms antes de reintentar",
                         ESPERA_RATE_LIMIT_MS);
                 dormir(ESPERA_RATE_LIMIT_MS);
                 return obtenerInventario(steamId, appId, startAssetId, true);
             }
 
-            log.error("❌ Error al consultar Steam: {}", mensaje);
+            log.error("Error al consultar Steam: {}", mensaje);
             return null;
         }
     }
@@ -117,24 +116,24 @@ public class SteamInventoryService {
         int intentosFallidos = 0;
         Integer totalInventarioEsperado = null;
 
-        log.info("🔄 Iniciando obtención de TODAS las páginas...");
+        log.info("Iniciando obtención de TODAS las páginas...");
 
         while (pagina <= MAX_PAGINAS) {
 
-            log.info("📄 Obteniendo página {}...", pagina);
+            log.info("Obteniendo página {}...", pagina);
 
             SteamInventoryResponse respuesta = obtenerInventario(steamId, appId, startAssetId);
 
             if (respuesta == null || !respuesta.isSuccess()) {
                 intentosFallidos++;
                 if (intentosFallidos >= MAX_REINTENTOS_PAGINA) {
-                    log.warn("⚠️ Demasiados intentos fallidos ({}), terminando", intentosFallidos);
+                    log.warn("Demasiados intentos fallidos ({}), terminando", intentosFallidos);
                     break;
                 }
 
                 // Backoff exponencial: 2s, 4s, 8s...
                 long espera = (long) Math.pow(2, intentosFallidos) * 1000;
-                log.info("⏳ Esperando {} ms antes de reintentar...", espera);
+                log.info("Esperando {} ms antes de reintentar...", espera);
                 dormir(espera);
                 continue;
             }
@@ -145,12 +144,12 @@ public class SteamInventoryService {
             // Guardar el total esperado la primera vez
             if (totalInventarioEsperado == null) {
                 totalInventarioEsperado = respuesta.getTotal_inventory_count();
-                log.info("📊 Total de items en inventario según Steam: {}", totalInventarioEsperado);
+                log.info("Total de items en inventario según Steam: {}", totalInventarioEsperado);
             }
 
             // Sin assets → no hay más páginas
             if (respuesta.getAssets() == null || respuesta.getAssets().isEmpty()) {
-                log.info("✅ No hay más items, última página: {}", pagina - 1);
+                log.info("No hay más items, última página: {}", pagina - 1);
                 break;
             }
 
@@ -159,40 +158,40 @@ public class SteamInventoryService {
             int itemsEnPagina = respuesta.getAssets().size();
             totalItemsObtenidos += itemsEnPagina;
 
-            log.info("✅ Página {}: {} items | Total acumulado: {}/{}",
+            log.info("Página {}: {} items | Total acumulado: {}/{}",
                     pagina, itemsEnPagina, totalItemsObtenidos, totalInventarioEsperado);
 
             // Ya tenemos todo lo esperado
             if (totalInventarioEsperado != null && totalItemsObtenidos >= totalInventarioEsperado) {
-                log.info("✅ Todos los items han sido obtenidos");
+                log.info("Todos los items han sido obtenidos");
                 break;
             }
 
             // Página incompleta → es la última
             if (itemsEnPagina < ITEMS_POR_PAGINA) {
-                log.info("✅ Última página (menos de {} items)", ITEMS_POR_PAGINA);
+                log.info("Última página (menos de {} items)", ITEMS_POR_PAGINA);
                 break;
             }
 
             // Preparar siguiente página
             startAssetId = respuesta.getAssets().get(itemsEnPagina - 1).getAssetid();
-            log.debug("🔑 Next start_assetid: {}", startAssetId);
+            log.debug("Next start_assetid: {}", startAssetId);
 
             dormir(DELAY_ENTRE_PAGINAS_MS);
             pagina++;
         }
 
         if (pagina > MAX_PAGINAS) {
-            log.warn("⚠️ Se alcanzó el máximo de páginas ({}), deteniendo por seguridad", MAX_PAGINAS);
+            log.warn("Se alcanzó el máximo de páginas ({}), deteniendo por seguridad", MAX_PAGINAS);
         }
 
-        log.info("📊 ===== RESUMEN DE PÁGINAS =====");
-        log.info("📄 Total de páginas obtenidas: {}", todasLasPaginas.size());
-        log.info("📦 Total de items obtenidos: {}", totalItemsObtenidos);
+        log.info("===== RESUMEN DE PÁGINAS =====");
+        log.info("Total de páginas obtenidas: {}", todasLasPaginas.size());
+        log.info("Total de items obtenidos: {}", totalItemsObtenidos);
         if (totalInventarioEsperado != null) {
-            log.info("📦 Total esperado según Steam: {}", totalInventarioEsperado);
+            log.info("Total esperado según Steam: {}", totalInventarioEsperado);
             if (totalItemsObtenidos < totalInventarioEsperado) {
-                log.warn("⚠️ Faltan {} items por obtener",
+                log.warn("Faltan {} items por obtener",
                         totalInventarioEsperado - totalItemsObtenidos);
             }
         }
@@ -205,7 +204,7 @@ public class SteamInventoryService {
             Thread.sleep(ms);
         } catch (InterruptedException e) {
             Thread.currentThread().interrupt();
-            log.warn("⚠️ Espera interrumpida");
+            log.warn("Espera interrumpida");
         }
     }
 }

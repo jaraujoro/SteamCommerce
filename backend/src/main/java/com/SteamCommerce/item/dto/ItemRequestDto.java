@@ -17,29 +17,6 @@ public class ItemRequestDto {
     @JsonProperty("asset_id")
     private String assetId;
 
-    @JsonProperty("app_id")
-    private String appId;
-
-    @JsonProperty("context_id")
-    private String contextId;
-
-    @JsonProperty("class_id")
-    private String classId;
-
-    @JsonProperty("instance_id")
-    private String instanceId;
-
-    @JsonProperty("amount")
-    private Integer amount;
-
-    @NotNull(message = "El name es obligatorio")
-    @JsonProperty("name")
-    private String name;
-
-    @NotNull(message = "El market_name es obligatorio")
-    @JsonProperty("market_name")
-    private String marketName;
-
     @NotNull(message = "El market_hash_name es obligatorio")
     @JsonProperty("market_hash_name")
     private String marketHashName;
@@ -55,9 +32,6 @@ public class ItemRequestDto {
 
     @JsonProperty("marketable")
     private Boolean marketable;
-
-    @JsonProperty("commodity")
-    private Boolean commodity;
 
     @JsonProperty("market_tradable_restriction")
     private Integer marketTradableRestriction;

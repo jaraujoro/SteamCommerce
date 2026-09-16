@@ -21,4 +21,7 @@ public interface ItemRepository extends JpaRepository<ItemEntity, Long> {
 
     @Query("SELECT i FROM ItemEntity i WHERE i.assetId IN :assetIds")
     List<ItemEntity> findAllByAssetIdIn(@Param("assetIds") Collection<String> assetIds);
+
+    @Query("SELECT i FROM ItemEntity i LEFT JOIN FETCH i.tipoItem LEFT JOIN FETCH i.rareza LEFT JOIN FETCH i.heroe")
+    List<ItemEntity> findAllWithRelations();
 }

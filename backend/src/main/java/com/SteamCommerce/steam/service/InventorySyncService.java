@@ -1,12 +1,15 @@
 package com.SteamCommerce.steam.service;
 
+import com.SteamCommerce.heroe.service.HeroeService;
 import com.SteamCommerce.item.dto.ItemRequestDto;
 import com.SteamCommerce.item.dto.ResultadoSync;
 import com.SteamCommerce.item.service.ItemService;
+import com.SteamCommerce.rareza.service.RarezaService;
 import com.SteamCommerce.steam.dto.SteamAsset;
 import com.SteamCommerce.steam.dto.SteamDescription;
 import com.SteamCommerce.steam.dto.SteamInventoryResponse;
 import com.SteamCommerce.steam.mapper.SteamItemMapper;
+import com.SteamCommerce.tipoitem.service.TipoItemService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -24,6 +27,9 @@ public class InventorySyncService {
     private final SteamInventoryService steamInventoryService;
     private final ItemService itemService;
     private final SteamItemMapper steamItemMapper;
+    private final HeroeService heroeService;
+    private final RarezaService rarezaService;
+    private final TipoItemService tipoItemService;
 
     public void sincronizarInventario() {
         sincronizarInventario("76561198290695666", "570");
@@ -33,10 +39,14 @@ public class InventorySyncService {
 
         long inicio = System.currentTimeMillis();
 
+        heroeService.precargarCache();
+        rarezaService.precargarCache();
+        tipoItemService.precargarCache();
+
         List<SteamInventoryResponse> todasLasPaginas = steamInventoryService.obtenerInventarioCompleto(steamId, appId);
 
         if (todasLasPaginas.isEmpty()) {
-            log.warn("⚠️ No se pudo obtener el inventario de Steam");
+            log.warn("No se pudo obtener el inventario de Steam");
             return;
         }
 
@@ -50,7 +60,7 @@ public class InventorySyncService {
             }
         }
 
-        // 2. Recorrer TODO en memoria, filtrar y armar la lista de DTOs
+        // 2. Recorrer todo y armar la lista de DTOs
         List<ItemRequestDto> candidatos = new ArrayList<>();
         int sinDescripcion = 0;
         int noTradables = 0;
@@ -70,11 +80,9 @@ public class InventorySyncService {
                 }
 
                 ItemRequestDto dto = steamItemMapper.toItemRequestDto(asset, desc);
-                if (dto == null) {
+                if (dto == null)
                     continue;
-                }
 
-                // 👇 Filtro: guardar si es tradable O si tiene cooldown futuro
                 boolean esTradable = Boolean.TRUE.equals(dto.getTradable());
                 boolean tieneCooldown = dto.getTradeCooldownUntil() != null;
 
@@ -82,12 +90,11 @@ public class InventorySyncService {
                     noTradables++;
                     continue;
                 }
-
                 candidatos.add(dto);
             }
         }
 
-        log.info("📦 Total items: {} | Candidatos: {} | No tradables: {} | Sin descripción: {}",
+        log.info("Total items: {} | Candidatos: {} | No tradables: {} | Sin descripción: {}",
                 totalItems, candidatos.size(), noTradables, sinDescripcion);
 
         // 3. Guardar en batch
@@ -95,13 +102,13 @@ public class InventorySyncService {
 
         long duracion = System.currentTimeMillis() - inicio;
 
-        log.info("📊 ===== RESUMEN DE SINCRONIZACIÓN =====");
-        log.info("✅ Nuevos guardados: {}", resultado.guardados());
-        log.info("🔄 Actualizados: {}", resultado.actualizados());
-        log.info("📦 Total procesados: {}", resultado.total());
-        log.info("🚫 No tradables (omitidos): {}", noTradables);
-        log.info("⚠️ Sin descripción: {}", sinDescripcion);
-        log.info("⏱️ Tiempo total: {} ms", duracion);
-        log.info("✅ SINCRONIZACIÓN COMPLETADA");
+        log.info("===== RESUMEN DE SINCRONIZACIÓN =====");
+        log.info("Nuevos guardados: {}", resultado.guardados());
+        log.info("Actualizados: {}", resultado.actualizados());
+        log.info("Total procesados: {}", resultado.total());
+        log.info("No tradables (omitidos): {}", noTradables);
+        log.info("Sin descripción: {}", sinDescripcion);
+        log.info("Tiempo total: {} ms", duracion);
+        log.info("SINCRONIZACIÓN COMPLETADA");
     }
 }

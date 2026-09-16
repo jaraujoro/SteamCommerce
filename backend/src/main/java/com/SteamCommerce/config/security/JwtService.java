@@ -6,7 +6,6 @@ import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.security.Keys;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
-
 import java.security.Key;
 import java.util.Date;
 import java.util.HashMap;
@@ -55,7 +54,7 @@ public class JwtService {
         return extractExpiration(token).before(new Date());
     }
 
-    // ⬇️ GENERAR TOKEN DE ACCESO (usa steamId)
+    // GENERAR TOKEN DE ACCESO (usa steamId)
     public String generateToken(String steamId) {
         Map<String, Object> claims = new HashMap<>();
         claims.put("steam_id", steamId);
@@ -63,7 +62,7 @@ public class JwtService {
         return createToken(claims, steamId, expiration);
     }
 
-    // ⬇️ GENERAR TOKEN DE REFRESCO (usa steamId)
+    // GENERAR TOKEN DE REFRESCO (usa steamId)
     public String generateRefreshToken(String steamId) {
         Map<String, Object> claims = new HashMap<>();
         claims.put("steam_id", steamId);
@@ -81,7 +80,7 @@ public class JwtService {
                 .compact();
     }
 
-    // ⬇️ VALIDAR TOKEN DE ACCESO (sin UserDetails)
+    // VALIDAR TOKEN DE ACCESO (sin UserDetails)
     public Boolean validateToken(String token) {
         try {
             return !isTokenExpired(token);
@@ -90,7 +89,7 @@ public class JwtService {
         }
     }
 
-    // ⬇️ VALIDAR TOKEN DE REFRESCO
+    // VALIDAR TOKEN DE REFRESCO
     public Boolean validateRefreshToken(String token) {
         try {
             Claims claims = extractAllClaims(token);

@@ -7,12 +7,10 @@ import com.SteamCommerce.item.dto.ResultadoSync;
 import com.SteamCommerce.item.entity.ItemEntity;
 import com.SteamCommerce.item.mapper.ItemMapper;
 import com.SteamCommerce.item.repository.ItemRepository;
-
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
-
 import lombok.AllArgsConstructor;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Service;
@@ -31,7 +29,7 @@ public class ItemServiceImpl implements ItemService {
     @Override
     @Transactional(readOnly = true)
     public List<ItemResponseDto> listarItems() {
-        List<ItemEntity> items = itemRepository.findAll();
+        List<ItemEntity> items = itemRepository.findAllWithRelations();
         return items.stream().map(itemMapper::toResponseDto).toList();
     }
 
@@ -55,7 +53,6 @@ public class ItemServiceImpl implements ItemService {
             entity.setMarketable(dto.getMarketable());
             entity.setTradeCooldownUntil(dto.getTradeCooldownUntil());
             entity.setMarketTradableRestriction(dto.getMarketTradableRestriction());
-            entity.setAmount(dto.getAmount());
             entity.setColor(dto.getColor());
             itemRepository.save(entity);
             return;
@@ -100,7 +97,7 @@ public class ItemServiceImpl implements ItemService {
                     """
                             UPDATE item
                             SET tradable = ?, marketable = ?, trade_cooldown_until = ?,
-                                market_tradable_restriction = ?, amount = ?, color = ?
+                                market_tradable_restriction = ?, color = ?
                             WHERE asset_id = ?
                             """,
                     existentes,
@@ -112,9 +109,8 @@ public class ItemServiceImpl implements ItemService {
                                 ? Timestamp.valueOf(dto.getTradeCooldownUntil())
                                 : null);
                         ps.setObject(4, dto.getMarketTradableRestriction());
-                        ps.setObject(5, dto.getAmount());
-                        ps.setString(6, dto.getColor());
-                        ps.setString(7, dto.getAssetId());
+                        ps.setString(5, dto.getColor());
+                        ps.setString(6, dto.getAssetId());
                     });
         }
 
@@ -123,11 +119,10 @@ public class ItemServiceImpl implements ItemService {
             jdbcTemplate.batchUpdate(
                     """
                             INSERT INTO item (
-                                public_id, asset_id, app_id, context_id, class_id, instance_id,
-                                amount, name, market_name, market_hash_name, icon_url, color,
-                                tradable, marketable, commodity, market_tradable_restriction,
+                                public_id, asset_id, market_hash_name, icon_url, color,
+                                tradable, marketable, market_tradable_restriction,
                                 trade_cooldown_until, id_tipo_item, id_rareza, id_heroe, creado_en
-                            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
                             """,
                     nuevos,
                     BATCH_SIZE,
@@ -135,19 +130,11 @@ public class ItemServiceImpl implements ItemService {
                         int i = 1;
                         ps.setString(i++, UUID.randomUUID().toString());
                         ps.setString(i++, dto.getAssetId());
-                        ps.setString(i++, dto.getAppId());
-                        ps.setString(i++, dto.getContextId());
-                        ps.setString(i++, dto.getClassId());
-                        ps.setString(i++, dto.getInstanceId());
-                        ps.setObject(i++, dto.getAmount());
-                        ps.setString(i++, dto.getName());
-                        ps.setString(i++, dto.getMarketName());
                         ps.setString(i++, dto.getMarketHashName());
                         ps.setString(i++, dto.getIconUrl());
                         ps.setString(i++, dto.getColor());
                         ps.setObject(i++, dto.getTradable());
                         ps.setObject(i++, dto.getMarketable());
-                        ps.setObject(i++, dto.getCommodity());
                         ps.setObject(i++, dto.getMarketTradableRestriction());
                         ps.setTimestamp(i++,
                                 dto.getTradeCooldownUntil() != null ? Timestamp.valueOf(dto.getTradeCooldownUntil())
@@ -155,7 +142,7 @@ public class ItemServiceImpl implements ItemService {
                         ps.setObject(i++, dto.getIdTipoItem());
                         ps.setObject(i++, dto.getIdRareza());
                         ps.setObject(i++, dto.getIdHeroe());
-                        ps.setTimestamp(i, Timestamp.valueOf(java.time.LocalDateTime.now()));
+                        ps.setTimestamp(i++, Timestamp.valueOf(java.time.LocalDateTime.now()));
                     });
         }
         return new ResultadoSync(nuevos.size(), existentes.size(), items.size());

@@ -13,22 +13,6 @@ import lombok.NoArgsConstructor;
 public class ItemResponseDto {
     private String publicId;
 
-    private String assetId;
-
-    private String appId;
-
-    private String contextId;
-
-    private String classId;
-
-    private String instanceId;
-
-    private Integer amount;
-
-    private String name;
-
-    private String marketName;
-
     private String marketHashName;
 
     private String iconUrl;
@@ -39,17 +23,15 @@ public class ItemResponseDto {
 
     private Boolean marketable;
 
-    private Boolean commodity;
-
     private Integer marketTradableRestriction;
 
     private LocalDateTime tradeCooldownUntil;
 
-    private Long idTipoItem;
+    private String tipoItem;
 
-    private Long idRareza;
+    private String rarity;
 
-    private Long idHeroe;
+    private String hero;
 
     private LocalDateTime creadoEn;
 }

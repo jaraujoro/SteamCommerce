@@ -2,7 +2,6 @@ package com.SteamCommerce.steam.util;
 
 import com.SteamCommerce.steam.dto.SteamDescriptionItem;
 import lombok.extern.slf4j.Slf4j;
-
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeFormatterBuilder;
@@ -55,11 +54,11 @@ public class TradeCooldownParser {
             String textoLimpio = limpiarTexto(textoOriginal);
 
             if (contienePalabraClaveCooldown(textoLimpio)) {
-                log.info("🔍 Detectado texto de restricción: '{}'", textoLimpio);
+                log.info("Detectado texto de restricción: '{}'", textoLimpio);
 
                 LocalDateTime fechaParseada = parsearFecha(textoLimpio);
                 if (fechaParseada != null) {
-                    log.info("✅ Fecha de cooldown parseada correctamente: {}", fechaParseada);
+                    log.info("Fecha de cooldown parseada correctamente: {}", fechaParseada);
                     return fechaParseada;
                 }
             }
@@ -100,7 +99,7 @@ public class TradeCooldownParser {
             try {
                 return LocalDateTime.parse(grupoFecha, FORMATEADOR_ESTANDAR);
             } catch (DateTimeParseException e) {
-                log.warn("⚠️ Falló el parseo estándar para la cadena: '{}'", grupoFecha);
+                log.warn("Falló el parseo estándar para la cadena: '{}'", grupoFecha);
             }
         }
 
@@ -111,11 +110,11 @@ public class TradeCooldownParser {
             try {
                 return LocalDateTime.parse(grupoFecha, FORMATEADOR_LEGACY);
             } catch (DateTimeParseException e) {
-                log.warn("⚠️ Falló el parseo legacy para la cadena: '{}'", grupoFecha);
+                log.warn("Falló el parseo legacy para la cadena: '{}'", grupoFecha);
             }
         }
 
-        log.error("❌ Se encontró el texto de Cooldown pero la fecha no coincidió con ningún patrón: '{}'", texto);
+        log.error("Se encontró el texto de Cooldown pero la fecha no coincidió con ningún patrón: '{}'", texto);
         return null;
     }
 }

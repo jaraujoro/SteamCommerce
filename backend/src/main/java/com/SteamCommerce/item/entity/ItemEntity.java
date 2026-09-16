@@ -2,14 +2,20 @@ package com.SteamCommerce.item.entity;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.PrePersist;
 import jakarta.persistence.Table;
 import java.time.LocalDateTime;
 import java.util.UUID;
 import org.hibernate.annotations.CreationTimestamp;
+import com.SteamCommerce.heroe.entity.HeroeEntity;
+import com.SteamCommerce.rareza.entity.RarezaEntity;
+import com.SteamCommerce.tipoitem.entity.TipoItemEntity;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -35,24 +41,6 @@ public class ItemEntity {
     @Column(name = "asset_id")
     private String assetId;
 
-    @Column(name = "app_id")
-    private String appId;
-
-    @Column(name = "context_id")
-    private String contextId;
-
-    @Column(name = "class_id")
-    private String classId;
-
-    @Column(name = "instance_id")
-    private String instanceId;
-
-    @Column(name = "amount")
-    private Integer amount;
-
-    @Column(name = "name", length = 500)
-    private String name;
-
     @Column(name = "market_name", length = 500)
     private String marketName;
 
@@ -71,16 +59,13 @@ public class ItemEntity {
     @Column(name = "marketable")
     private Boolean marketable;
 
-    @Column(name = "commodity")
-    private Boolean commodity;
-
     @Column(name = "market_tradable_restriction")
     private Integer marketTradableRestriction;
 
     @Column(name = "trade_cooldown_until")
     private LocalDateTime tradeCooldownUntil;
 
-    @Column(name = "id_tipo_item", nullable = false)
+    @Column(name = "id_tipo_item")
     private Long idTipoItem;
 
     @Column(name = "id_rareza")
@@ -88,6 +73,18 @@ public class ItemEntity {
 
     @Column(name = "id_heroe")
     private Long idHeroe;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "id_tipo_item", insertable = false, updatable = false)
+    private TipoItemEntity tipoItem;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "id_rareza", insertable = false, updatable = false)
+    private RarezaEntity rareza;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "id_heroe", insertable = false, updatable = false)
+    private HeroeEntity heroe;
 
     @CreationTimestamp
     @Column(name = "creado_en", updatable = false)
