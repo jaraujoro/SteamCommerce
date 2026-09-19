@@ -1,9 +1,10 @@
-package com.SteamCommerce.tipoitem.mapper;
+package com.SteamCommerce.tipo_item.mapper;
 
-import com.SteamCommerce.tipoitem.dto.TipoItemRequestDto;
-import com.SteamCommerce.tipoitem.dto.TipoItemResponseDto;
-import com.SteamCommerce.tipoitem.entity.TipoItemEntity;
 import org.springframework.stereotype.Component;
+
+import com.SteamCommerce.tipo_item.dto.TipoItemRequestDto;
+import com.SteamCommerce.tipo_item.dto.TipoItemResponseDto;
+import com.SteamCommerce.tipo_item.entity.TipoItemEntity;
 
 @Component
 public class TipoItemMapper {

@@ -1,4 +1,4 @@
-package com.SteamCommerce.tipoitem.dto;
+package com.SteamCommerce.tipo_item.dto;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AllArgsConstructor;

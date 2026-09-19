@@ -15,7 +15,6 @@ public class AuthMapper {
                 .steamId(usuario.getSteamId())
                 .nombre(usuario.getNombre())
                 .avatar(usuario.getAvatar())
-                .rol(usuario.getRole())
                 .build();
     }
 

@@ -7,15 +7,13 @@ import com.SteamCommerce.item.dto.ResultadoSync;
 import com.SteamCommerce.item.entity.ItemEntity;
 import com.SteamCommerce.item.mapper.ItemMapper;
 import com.SteamCommerce.item.repository.ItemRepository;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.UUID;
+import java.util.Set;
+import java.util.stream.Collectors;
 import lombok.AllArgsConstructor;
-import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import java.sql.Timestamp;
 
 @Service
 @AllArgsConstructor
@@ -23,8 +21,6 @@ public class ItemServiceImpl implements ItemService {
 
     private final ItemRepository itemRepository;
     private final ItemMapper itemMapper;
-    private final JdbcTemplate jdbcTemplate;
-    private static final int BATCH_SIZE = 100;
 
     @Override
     @Transactional(readOnly = true)
@@ -65,86 +61,44 @@ public class ItemServiceImpl implements ItemService {
     @Override
     @Transactional
     public ResultadoSync crearItemsEnBatch(List<ItemRequestDto> items) {
-
         if (items == null || items.isEmpty()) {
-            return new ResultadoSync(0, 0, 0);
+            return ResultadoSync.vacio();
         }
 
-        // 1. Traer TODOS los existentes con 1 sola query
-        List<String> assetIds = items.stream()
-                .map(ItemRequestDto::getAssetId)
-                .filter(id -> id != null && !id.isBlank())
-                .toList();
+        Map<String, ItemEntity> existentes = buscarExistentes(items);
 
-        Map<String, Long> existentesPorAssetId = new HashMap<>();
-        if (!assetIds.isEmpty()) {
-            itemRepository.findAllByAssetIdIn(assetIds)
-                    .forEach(e -> existentesPorAssetId.put(e.getAssetId(), e.getIdItem()));
-        }
+        List<ItemEntity> aGuardar = items.stream().map(dto -> resolverEntidad(dto, existentes)).toList();
 
-        // 2. Separar en nuevos y existentes
-        List<ItemRequestDto> nuevos = items.stream()
-                .filter(i -> !existentesPorAssetId.containsKey(i.getAssetId()))
-                .toList();
+        itemRepository.saveAll(aGuardar);
 
-        List<ItemRequestDto> existentes = items.stream()
-                .filter(i -> existentesPorAssetId.containsKey(i.getAssetId()))
-                .toList();
+        int actualizados = (int) aGuardar.stream().filter(e -> existentes.containsKey(e.getAssetId())).count();
 
-        // 3. Batch UPDATE de existentes (mismos campos que tu crearItem actual)
-        if (!existentes.isEmpty()) {
-            jdbcTemplate.batchUpdate(
-                    """
-                            UPDATE item
-                            SET tradable = ?, marketable = ?, trade_cooldown_until = ?,
-                                market_tradable_restriction = ?, color = ?
-                            WHERE asset_id = ?
-                            """,
-                    existentes,
-                    BATCH_SIZE,
-                    (ps, dto) -> {
-                        ps.setObject(1, dto.getTradable());
-                        ps.setObject(2, dto.getMarketable());
-                        ps.setTimestamp(3, dto.getTradeCooldownUntil() != null
-                                ? Timestamp.valueOf(dto.getTradeCooldownUntil())
-                                : null);
-                        ps.setObject(4, dto.getMarketTradableRestriction());
-                        ps.setString(5, dto.getColor());
-                        ps.setString(6, dto.getAssetId());
-                    });
-        }
+        int nuevos = aGuardar.size() - actualizados;
 
-        // 4. Batch INSERT de nuevos
-        if (!nuevos.isEmpty()) {
-            jdbcTemplate.batchUpdate(
-                    """
-                            INSERT INTO item (
-                                public_id, asset_id, market_hash_name, icon_url, color,
-                                tradable, marketable, market_tradable_restriction,
-                                trade_cooldown_until, id_tipo_item, id_rareza, id_heroe, creado_en
-                            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-                            """,
-                    nuevos,
-                    BATCH_SIZE,
-                    (ps, dto) -> {
-                        int i = 1;
-                        ps.setString(i++, UUID.randomUUID().toString());
-                        ps.setString(i++, dto.getAssetId());
-                        ps.setString(i++, dto.getMarketHashName());
-                        ps.setString(i++, dto.getIconUrl());
-                        ps.setString(i++, dto.getColor());
-                        ps.setObject(i++, dto.getTradable());
-                        ps.setObject(i++, dto.getMarketable());
-                        ps.setObject(i++, dto.getMarketTradableRestriction());
-                        ps.setTimestamp(i++,
-                                dto.getTradeCooldownUntil() != null ? Timestamp.valueOf(dto.getTradeCooldownUntil())
-                                        : null);
-                        ps.setObject(i++, dto.getIdTipoItem());
-                        ps.setObject(i++, dto.getIdRareza());
-                        ps.setObject(i++, dto.getIdHeroe());
-                        ps.setTimestamp(i++, Timestamp.valueOf(java.time.LocalDateTime.now()));
-                    });
-        }
-        return new ResultadoSync(nuevos.size(), existentes.size(), items.size());
+        return new ResultadoSync(nuevos, actualizados, items.size());
     }
+
+    private Map<String, ItemEntity> buscarExistentes(List<ItemRequestDto> items) {
+        Set<String> assetIds = items.stream().map(ItemRequestDto::getAssetId).filter(id -> id != null && !id.isBlank())
+                .collect(Collectors.toSet());
+
+        if (assetIds.isEmpty()) {
+            return Map.of();
+        }
+
+        return itemRepository.findAllByAssetIdIn(assetIds).stream()
+                .collect(Collectors.toMap(ItemEntity::getAssetId, e -> e));
+    }
+
+    private ItemEntity resolverEntidad(ItemRequestDto dto, Map<String, ItemEntity> existentes) {
+        ItemEntity existente = existentes.get(dto.getAssetId());
+
+        if (existente != null) {
+            itemMapper.updateEntity(existente, dto);
+            return existente;
+        }
+
+        return itemMapper.toEntity(dto);
+    }
+
 }

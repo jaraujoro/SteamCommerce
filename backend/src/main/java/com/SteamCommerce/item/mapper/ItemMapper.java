@@ -28,6 +28,14 @@ public class ItemMapper {
                 .build();
     }
 
+    public void updateEntity(ItemEntity entity, ItemRequestDto dto) {
+        entity.setTradable(dto.getTradable());
+        entity.setMarketable(dto.getMarketable());
+        entity.setTradeCooldownUntil(dto.getTradeCooldownUntil());
+        entity.setMarketTradableRestriction(dto.getMarketTradableRestriction());
+        entity.setColor(dto.getColor());
+    }
+
     public ItemResponseDto toResponseDto(ItemEntity entity) {
         if (entity == null) {
             return null;
@@ -45,7 +53,6 @@ public class ItemMapper {
                 .tipoItem(entity.getTipoItem() != null ? entity.getTipoItem().getNombre() : null)
                 .rarity(entity.getRareza() != null ? entity.getRareza().getNombre() : null)
                 .hero(entity.getHeroe() != null ? entity.getHeroe().getNombre() : null)
-                .creadoEn(entity.getCreadoEn())
                 .build();
     }
 }

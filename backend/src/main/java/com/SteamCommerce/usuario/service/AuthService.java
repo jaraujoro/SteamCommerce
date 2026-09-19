@@ -64,7 +64,6 @@ public class AuthService {
                 .orElseGet(() -> {
                     UsuarioEntity nuevo = new UsuarioEntity();
                     nuevo.setSteamId(cleanSteamId);
-                    nuevo.setRole("USER");
                     return nuevo;
                 });
 

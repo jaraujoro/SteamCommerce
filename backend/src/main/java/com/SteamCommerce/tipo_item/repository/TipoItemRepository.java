@@ -1,8 +1,10 @@
-package com.SteamCommerce.tipoitem.repository;
+package com.SteamCommerce.tipo_item.repository;
 
-import com.SteamCommerce.tipoitem.entity.TipoItemEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
+
+import com.SteamCommerce.tipo_item.entity.TipoItemEntity;
+
 import java.util.Optional;
 
 @Repository

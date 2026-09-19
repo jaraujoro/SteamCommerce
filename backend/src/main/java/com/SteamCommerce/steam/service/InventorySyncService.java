@@ -9,7 +9,8 @@ import com.SteamCommerce.steam.dto.SteamAsset;
 import com.SteamCommerce.steam.dto.SteamDescription;
 import com.SteamCommerce.steam.dto.SteamInventoryResponse;
 import com.SteamCommerce.steam.mapper.SteamItemMapper;
-import com.SteamCommerce.tipoitem.service.TipoItemService;
+import com.SteamCommerce.tipo_item.service.TipoItemService;
+
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;

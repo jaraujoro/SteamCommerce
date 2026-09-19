@@ -1,4 +1,4 @@
-package com.SteamCommerce.tipoitem.entity;
+package com.SteamCommerce.tipo_item.entity;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;

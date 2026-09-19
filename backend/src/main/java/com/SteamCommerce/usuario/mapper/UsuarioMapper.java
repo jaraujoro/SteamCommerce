@@ -18,8 +18,6 @@ public class UsuarioMapper {
                 .nombre(dto.getNombre())
                 .avatar(dto.getAvatar())
                 .tradeUrl(dto.getTradeUrl())
-                .saldoSoles(dto.getSaldoSoles())
-                .role(dto.getRole() != null ? dto.getRole() : "Cliente")
                 .build();
     }
 
@@ -33,8 +31,6 @@ public class UsuarioMapper {
                 .nombre(entity.getNombre())
                 .avatar(entity.getAvatar())
                 .tradeUrl(entity.getTradeUrl())
-                .saldoSoles(entity.getSaldoSoles())
-                .role(entity.getRole())
                 .build();
     }
 

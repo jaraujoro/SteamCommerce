@@ -1,8 +1,9 @@
-package com.SteamCommerce.tipoitem.service;
+package com.SteamCommerce.tipo_item.service;
 
-import com.SteamCommerce.tipoitem.dto.TipoItemRequestDto;
-import com.SteamCommerce.tipoitem.dto.TipoItemResponseDto;
 import java.util.List;
+
+import com.SteamCommerce.tipo_item.dto.TipoItemRequestDto;
+import com.SteamCommerce.tipo_item.dto.TipoItemResponseDto;
 
 public interface TipoItemService {
 

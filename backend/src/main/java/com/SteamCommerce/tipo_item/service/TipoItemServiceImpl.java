@@ -1,11 +1,12 @@
-package com.SteamCommerce.tipoitem.service;
+package com.SteamCommerce.tipo_item.service;
 
 import com.SteamCommerce.config.exception.BadRequestException;
-import com.SteamCommerce.tipoitem.dto.TipoItemRequestDto;
-import com.SteamCommerce.tipoitem.dto.TipoItemResponseDto;
-import com.SteamCommerce.tipoitem.entity.TipoItemEntity;
-import com.SteamCommerce.tipoitem.mapper.TipoItemMapper;
-import com.SteamCommerce.tipoitem.repository.TipoItemRepository;
+import com.SteamCommerce.tipo_item.dto.TipoItemRequestDto;
+import com.SteamCommerce.tipo_item.dto.TipoItemResponseDto;
+import com.SteamCommerce.tipo_item.entity.TipoItemEntity;
+import com.SteamCommerce.tipo_item.mapper.TipoItemMapper;
+import com.SteamCommerce.tipo_item.repository.TipoItemRepository;
+
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;

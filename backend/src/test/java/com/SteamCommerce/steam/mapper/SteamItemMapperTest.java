@@ -6,7 +6,8 @@ import com.SteamCommerce.rareza.service.RarezaService;
 import com.SteamCommerce.steam.dto.SteamAsset;
 import com.SteamCommerce.steam.dto.SteamDescription;
 import com.SteamCommerce.steam.dto.SteamTag;
-import com.SteamCommerce.tipoitem.service.TipoItemService;
+import com.SteamCommerce.tipo_item.service.TipoItemService;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;

@@ -15,7 +15,8 @@ import java.util.UUID;
 import org.hibernate.annotations.CreationTimestamp;
 import com.SteamCommerce.heroe.entity.HeroeEntity;
 import com.SteamCommerce.rareza.entity.RarezaEntity;
-import com.SteamCommerce.tipoitem.entity.TipoItemEntity;
+import com.SteamCommerce.tipo_item.entity.TipoItemEntity;
+
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -87,8 +88,8 @@ public class ItemEntity {
     private HeroeEntity heroe;
 
     @CreationTimestamp
-    @Column(name = "creado_en", updatable = false)
-    private LocalDateTime creadoEn;
+    @Column(name = "fecha_registro", updatable = false)
+    private LocalDateTime fechaRegistro;
 
     @PrePersist
     public void generarPublicId() {

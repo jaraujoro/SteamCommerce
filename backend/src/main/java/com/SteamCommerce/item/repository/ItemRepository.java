@@ -17,8 +17,6 @@ public interface ItemRepository extends JpaRepository<ItemEntity, Long> {
 
     boolean existsByAssetId(String assetId);
 
-    List<ItemEntity> findByMarketHashName(String marketHashName);
-
     @Query("SELECT i FROM ItemEntity i WHERE i.assetId IN :assetIds")
     List<ItemEntity> findAllByAssetIdIn(@Param("assetIds") Collection<String> assetIds);
 

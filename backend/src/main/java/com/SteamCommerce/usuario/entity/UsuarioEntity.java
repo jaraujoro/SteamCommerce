@@ -6,8 +6,9 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
-import java.math.BigDecimal;
+import java.time.LocalDateTime;
 import java.util.UUID;
+import org.hibernate.annotations.CreationTimestamp;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -38,9 +39,7 @@ public class UsuarioEntity {
     @Column(name = "trade_url")
     private String tradeUrl;
 
-    @Column(name = "saldo_soles", precision = 10, scale = 2)
-    private BigDecimal saldoSoles;
-
-    @Column(name = "role", length = 50)
-    private String role;
+    @CreationTimestamp
+    @Column(name = "fecha_registro", updatable = false)
+    private LocalDateTime fechaRegistro;
 }
