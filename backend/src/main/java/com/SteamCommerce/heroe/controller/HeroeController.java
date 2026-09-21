@@ -21,12 +21,12 @@ public class HeroeController {
 
     private final HeroeService heroeService;
 
-    @GetMapping("/listar_heroe")
+    @GetMapping
     public ApiResponse<List<HeroeResponseDto>> listarHeroe() {
         return ApiResponse.success("Héroes listados exitosamente", HttpStatus.OK.value(), heroeService.listarHeroes());
     }
 
-    @PostMapping("/crear_heroe")
+    @PostMapping
     public ApiResponse<Void> crearHeroe(@Valid @RequestBody HeroeRequestDto dto) {
         heroeService.crearHeroe(dto);
         return ApiResponse.success("Héroe creado exitosamente", HttpStatus.CREATED.value());

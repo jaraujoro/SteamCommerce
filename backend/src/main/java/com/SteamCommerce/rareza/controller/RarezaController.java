@@ -21,13 +21,13 @@ public class RarezaController {
 
     private final RarezaService rarezaService;
 
-    @GetMapping("/listar_rareza")
+    @GetMapping
     public ApiResponse<List<RarezaResponseDto>> listarRareza() {
         return ApiResponse.success("Rarezas listadas exitosamente", HttpStatus.OK.value(),
                 rarezaService.listarRarezas());
     }
 
-    @PostMapping("/crear_rareza")
+    @PostMapping
     public ApiResponse<Void> crearRareza(@Valid @RequestBody RarezaRequestDto dto) {
         rarezaService.crearRareza(dto);
         return ApiResponse.success("Rareza creada exitosamente", HttpStatus.CREATED.value());

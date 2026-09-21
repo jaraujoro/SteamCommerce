@@ -31,7 +31,7 @@ services:
       context: .
       dockerfile: Dockerfile
     container_name: steam_commerce_backend
-    restart: "no"  # No se reinicia automáticamente al fallar
+    restart: "no"
     depends_on:
       postgres:
         condition: service_healthy

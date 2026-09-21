@@ -21,12 +21,12 @@ public class ItemController {
 
     private final ItemService itemService;
 
-    @GetMapping("/listar_item")
+    @GetMapping
     public ApiResponse<List<ItemResponseDto>> listarItem() {
-        return ApiResponse.success("Items listados exitosamente", HttpStatus.OK.value(), itemService.listarItems());
+        return ApiResponse.success("Items listados correctamente", HttpStatus.OK.value(), itemService.listarItems());
     }
 
-    @PostMapping("/crear_item")
+    @PostMapping
     public ApiResponse<Void> crearItem(@Valid @RequestBody ItemRequestDto dto) {
         itemService.crearItem(dto);
         return ApiResponse.success("Item creado exitosamente", HttpStatus.CREATED.value());

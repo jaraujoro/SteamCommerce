@@ -15,19 +15,19 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.List;
 
 @RestController
-@RequestMapping("/tipo_item")
+@RequestMapping("/tipo-item")
 @RequiredArgsConstructor
 public class TipoItemController {
 
     private final TipoItemService tipoItemService;
 
-    @GetMapping("/listar_tipo_item")
+    @GetMapping
     public ApiResponse<List<TipoItemResponseDto>> listarTipoItem() {
         return ApiResponse.success("Tipos de item listados exitosamente", HttpStatus.OK.value(),
                 tipoItemService.listarTipos());
     }
 
-    @PostMapping("/crear_tipo_item")
+    @PostMapping
     public ApiResponse<Void> crearTipoItem(@Valid @RequestBody TipoItemRequestDto dto) {
         tipoItemService.crearTipo(dto);
         return ApiResponse.success("Tipo de item creado exitosamente", HttpStatus.CREATED.value());

@@ -1,11 +1,13 @@
 package com.SteamCommerce.usuario.service;
 
+import java.util.UUID;
+
+import com.SteamCommerce.usuario.dto.ActualizarTradeUrlDto;
 import com.SteamCommerce.usuario.dto.UsuarioRequestDto;
-import com.SteamCommerce.usuario.dto.UsuarioResponseDto;
 
 public interface UsuarioService {
 
-    UsuarioResponseDto actualizarTradeUrl(UsuarioRequestDto dto);
+    void actualizarTradeUrl(UUID idUsuario, ActualizarTradeUrlDto dto);
 
     void crearUsuario(UsuarioRequestDto dto);
 }

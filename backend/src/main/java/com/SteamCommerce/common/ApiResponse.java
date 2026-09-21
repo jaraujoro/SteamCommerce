@@ -29,6 +29,7 @@ public class ApiResponse<T> {
         return new ApiResponse<T>(null, error, status, null);
     }
 
+    // Método para ÉXITO con data
     public static <T> ApiResponse<T> success(String message, int status, T data) {
         return new ApiResponse<T>(message, null, status, data);
     }
