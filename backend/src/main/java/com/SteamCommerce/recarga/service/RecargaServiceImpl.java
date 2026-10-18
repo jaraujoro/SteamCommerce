@@ -28,7 +28,6 @@ import org.springframework.transaction.annotation.Transactional;
 @RequiredArgsConstructor
 public class RecargaServiceImpl implements RecargaService {
 
-    // Estados válidos del ciclo de vida de una recarga
     private static final Set<String> ESTADOS_VALIDOS = Set.of(
             "PENDIENTE",
             "EN_REVISION",
@@ -37,7 +36,6 @@ public class RecargaServiceImpl implements RecargaService {
             "CANCELADO",
             "REEMBOLSADO");
 
-    // Generador de códigos
     private static final SecureRandom RANDOM = new SecureRandom();
     private static final int MAX_INTENTOS_CODIGO = 50;
     private static final int MAX_REINTENTOS_SAVE = 5;
@@ -48,9 +46,6 @@ public class RecargaServiceImpl implements RecargaService {
     private final UsuarioRepository usuarioRepository;
     private final RecargaMapper recargaMapper;
 
-    // ─────────────────────────────────────────────────────────────
-    // CREAR RECARGA
-    // ─────────────────────────────────────────────────────────────
     @Override
     @Transactional
     public RecargaResponseDto crearRecarga(RecargaRequestDto dto, UUID idUsuario) {
@@ -73,8 +68,7 @@ public class RecargaServiceImpl implements RecargaService {
             throw new BadRequestException("El tipo de pago seleccionado no se encuentra activo");
         }
 
-        // BUSCAR si ya existe una recarga PENDIENTE con el MISMO monto y tipo de
-        // pago
+        // BUSCAR si ya existe una recarga PENDIENTE con el MISMO monto y tipo de pago
         Optional<RecargaEntity> existente = recargaRepository
                 .findFirstByIdUsuarioAndEstadoAndIdTipoPagoAndMontoOrderByFechaCreacionDesc(
                         idUsuario,

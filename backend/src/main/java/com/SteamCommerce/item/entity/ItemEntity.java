@@ -16,7 +16,6 @@ import org.hibernate.annotations.CreationTimestamp;
 import com.SteamCommerce.heroe.entity.HeroeEntity;
 import com.SteamCommerce.rareza.entity.RarezaEntity;
 import com.SteamCommerce.tipo_item.entity.TipoItemEntity;
-
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -91,6 +90,10 @@ public class ItemEntity {
     @Column(name = "fecha_registro", updatable = false)
     private LocalDateTime fechaRegistro;
 
+    @Column(name = "estado", length = 20, nullable = false)
+    @Builder.Default
+    private String estado = "DISPONIBLE";
+
     @PrePersist
     public void generarPublicId() {
         if (this.publicId == null) {
@@ -98,3 +101,11 @@ public class ItemEntity {
         }
     }
 }
+
+// SIN STOCK -> 0 stock
+
+// DISPONIBLE → está en venta, cuenta para el stock.
+
+// RESERVADO → alguien lo está comprando, no cuenta.
+
+// VENDIDO → ya se vendió, no cuenta.
